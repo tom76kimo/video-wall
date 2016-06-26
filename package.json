@@ -1,0 +1,14 @@
+{
+  "name": "video-wall",
+  "version": "0.0.1",
+  "description": "A wall with videos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "youtube"
+  ],
+  "author": "tom76kimo <tom76kimo@gmail.com> (http://tom76kimo.github.io/)",
+  "license": "ISC"
+}
