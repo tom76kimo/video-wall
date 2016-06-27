@@ -8,9 +8,19 @@ const gapiInit = (globalParams) => {
     gapi.auth.authorize({
       client_id: OAUTH2_CLIENT_ID,
       scope: OAUTH2_SCOPES,
-      immdiate: false
+      immediate: true
     }, (authResult) => {
-      loadYoutubeAPI();
+      if (authResult && !authResult.error) {
+        loadYoutubeAPI();
+      } else {
+        api.auth.authorize({
+          client_id: OAUTH2_CLIENT_ID,
+          scope: OAUTH2_SCOPES,
+          immdiate: false
+        }, () => {
+          loadYoutubeAPI();
+        });
+      }
     });
   };
 
