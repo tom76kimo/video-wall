@@ -8,6 +8,25 @@ body {
 
 .wall-brick {
     display: inline-block;
+    height: 100%;
+}
+
+.wall-brick-big {
+  display: inline-flex;
+  display: -ms-inline-flex;
+  height: 30vh;
+}
+
+.wall-brick-medium {
+  display: inline-flex;
+  display: -ms-inline-flex;
+  height: 20vh;
+}
+
+.wall-brick-small {
+  display: inline-flex;
+  display: -ms-inline-flex;
+  height: 15vh;
 }
 
 

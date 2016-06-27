@@ -17,16 +17,29 @@ class Wall extends React.Component {
         </div>
       );
     }
+    let itemComponents = [];
+    const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const brickWidth = Math.floor(windowWidth / 6);
     const items = this.props.items;
-    const itemComponents = items.map((item, index) => {
+    items.forEach((item, index) => {
+      const wallIndex = index % 5;
       const thumbnails = item.snippet.thumbnails;
       const imgSrc = thumbnails.maxres ? thumbnails.maxres.url : thumbnails.medium.url;
-      return (
-          <img width="640" key={index} className="wall-brick" src={imgSrc} />
+      if (!itemComponents[wallIndex]) {
+        itemComponents[wallIndex] = [];
+      }
+      itemComponents[wallIndex].push (
+          <img key={index} className="wall-brick" src={imgSrc} />
       );
     });
     return (
-      <div>{itemComponents}</div>
+      <div>
+        <div className="wall-brick-small">{ itemComponents[0] }</div>
+        <div className="wall-brick-medium">{ itemComponents[1] }</div>
+        <div className="wall-brick-big">{ itemComponents[2] }</div>
+        <div className="wall-brick-medium">{ itemComponents[3] }</div>
+        <div className="wall-brick-small">{ itemComponents[4] }</div>
+      </div>
     );
   }
 }
@@ -40,7 +53,7 @@ class MainComponent extends React.Component {
       itemsLoaded: false,
       items: null,
     };
-    this.asyncLoadData = this.asyncLoadData.bind(this);
+    this.asyncLoadPlayLists = this.asyncLoadPlayLists.bind(this);
   }
   render() {
     // const lists =
@@ -56,40 +69,47 @@ class MainComponent extends React.Component {
       const request = gapi.client.youtube.activities.list({
         home: true,
         part: 'snippet',
-        maxResults: 5
+        maxResults: 20 
       });
 
       request.execute((response) => {
-        console.log('===', response);
-        self.asyncLoadData(response.items[1].snippet.channelId);
-        // self.setState({
-        //   items: response.items,
-        //   itemsLoaded: true,
-        // });
+        self.asyncLoadPlayLists(response.items);
       });
     }
   }
 
-  asyncLoadData(channelId) {
-    // async.parallel([
-    //   function (callback) {
-
-    //   }
-    // ]);
+  asyncLoadPlayLists(items) {
     const self = this;
-    const request = gapi.client.youtube.playlists.list({
-      part: 'snippet',
-      channelId: channelId,
-      maxResults: 20
-    });
-
-    request.execute((response) => {
-      console.log('===channels', response);
-      self.setState({
-        items: response.items,
-        itemsLoaded: true,
+    const playListLoaders = items.map((item, index) => {
+      const channelId = item.snippet.channelId;
+      const request = gapi.client.youtube.playlists.list({
+        part: 'snippet',
+        channelId,
+        maxResults: 20
       });
-    })
+      return function (callback) {
+        request.execute((response) => {
+          console.log('===', channelId, response);
+          callback(null, response);
+        });
+      };
+    });
+    async.parallel(playListLoaders, (err, results) => {
+      if (!err) {
+        self.setState({
+          itemsLoaded: true,
+          items: self.concatVideos(results),
+        })
+      }
+    });
+  }
+
+  concatVideos(results) {
+    let videoList = [];
+    results.forEach((result, index) => {
+      videoList = videoList.concat(result.items);
+    });
+    return videoList;
   }
 
 }
