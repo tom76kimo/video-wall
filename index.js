@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import GapiInit from './src/gapiInit';
+import WallBrick from './src/WallBrick';
 import async from 'async';
 
 let globalParams = {};
@@ -29,7 +30,7 @@ class Wall extends React.Component {
         itemComponents[wallIndex] = [];
       }
       itemComponents[wallIndex].push (
-          <img key={index} className="wall-brick" src={imgSrc} />
+          <WallBrick key={index} src={imgSrc} />
       );
     });
     return (
@@ -52,14 +53,23 @@ class MainComponent extends React.Component {
       apiLoaded: false,
       itemsLoaded: false,
       items: null,
+      offsetX: 0,
     };
     this.asyncLoadPlayLists = this.asyncLoadPlayLists.bind(this);
+    this.startTrackMouse = this.startTrackMouse.bind(this);
+    this.trackingMouse = this.trackingMouse.bind(this);
+    this.endTrackMouse = this.endTrackMouse.bind(this);
   }
   render() {
     // const lists =
-
+    const style = {
+        transitioin: 'all 0.1s',
+        marginLeft: `${this.state.offsetX}px`,
+    };
     return (
-      <div>{this.state.apiLoaded ? <Wall items={this.state.items} /> : null}</div>
+      <div style={style} onMouseDown={this.startTrackMouse}
+           onMouseMove={this.trackingMouse}
+           onMouseUp={this.endTrackMouse} >{this.state.apiLoaded ? <Wall items={this.state.items} /> : null}</div>
     );
   }
 
@@ -69,12 +79,40 @@ class MainComponent extends React.Component {
       const request = gapi.client.youtube.activities.list({
         home: true,
         part: 'snippet',
-        maxResults: 20 
+        maxResults: 20
       });
 
       request.execute((response) => {
         self.asyncLoadPlayLists(response.items);
       });
+    }
+  }
+
+  startTrackMouse() {
+    this._trackMouse = true;
+    this._startPointX = -1;
+    this._baseOffsetX = this.state.offsetX;
+  }
+
+  endTrackMouse() {
+    this._trackMouse = false;
+    this._startPointX = -1;
+  }
+
+  trackingMouse(e) {
+    if (this._trackMouse) {
+        if (this._startPointX === -1) {
+            this._startPointX = e.clientX;
+            return;
+        }
+        let offsetX = this._baseOffsetX + e.clientX - this._startPointX;
+        if (offsetX > 0) {
+            offsetX = 0;
+        }
+        this.setState({
+            offsetX,
+        });
+        // console.log(e.clientX, e.clientY);
     }
   }
 
