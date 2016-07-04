@@ -15,22 +15,35 @@ body {
     transition: all 1s;
 }
 
-.wall-brick-big {
+.wall-brick-row {
   display: inline-flex;
   display: -ms-inline-flex;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.wall-brick-big {
+  position: relative;
   height: 30vh;
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 .wall-brick-medium {
-  display: inline-flex;
-  display: -ms-inline-flex;
+  position: relative;
   height: 20vh;
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 .wall-brick-small {
-  display: inline-flex;
-  display: -ms-inline-flex;
+  position: relative;
   height: 15vh;
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 .wall-brick-cover {

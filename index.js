@@ -30,16 +30,16 @@ class Wall extends React.Component {
         itemComponents[wallIndex] = [];
       }
       itemComponents[wallIndex].push (
-          <WallBrick key={index} src={imgSrc} />
+          <WallBrick wallIndex={wallIndex} key={index} src={imgSrc} />
       );
     });
     return (
       <div>
-        <div className="wall-brick-small">{ itemComponents[0] }</div>
-        <div className="wall-brick-medium">{ itemComponents[1] }</div>
-        <div className="wall-brick-big">{ itemComponents[2] }</div>
-        <div className="wall-brick-medium">{ itemComponents[3] }</div>
-        <div className="wall-brick-small">{ itemComponents[4] }</div>
+        <div className="wall-brick-row">{ itemComponents[0] }</div>
+        <div className="wall-brick-row">{ itemComponents[1] }</div>
+        <div className="wall-brick-row">{ itemComponents[2] }</div>
+        <div className="wall-brick-row">{ itemComponents[3] }</div>
+        <div className="wall-brick-row">{ itemComponents[4] }</div>
       </div>
     );
   }
