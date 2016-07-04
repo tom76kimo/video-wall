@@ -112,7 +112,6 @@ class MainComponent extends React.Component {
         this.setState({
             offsetX,
         });
-        // console.log(e.clientX, e.clientY);
     }
   }
 

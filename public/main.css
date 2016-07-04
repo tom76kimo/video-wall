@@ -10,9 +10,6 @@ body {
 .wall-brick {
     position: relative;
     display: inline-block;
-    height: 100%;
-    opacity: 0;
-    transition: all 1s;
 }
 
 .wall-brick-row {
@@ -26,21 +23,18 @@ body {
 }
 
 .wall-brick-big {
-  position: relative;
   height: 30vh;
   opacity: 0;
   transition: opacity 1s;
 }
 
 .wall-brick-medium {
-  position: relative;
   height: 20vh;
   opacity: 0;
   transition: opacity 1s;
 }
 
 .wall-brick-small {
-  position: relative;
   height: 15vh;
   opacity: 0;
   transition: opacity 1s;
