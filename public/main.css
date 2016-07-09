@@ -40,16 +40,20 @@ body {
   transition: opacity 1s;
 }
 
+.wall-brick:hover .wall-brick-cover {
+  display: flex;
+}
+
 .wall-brick-cover {
+  display: none;
+  align-items: center;
+  text-align: center;
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, .4);
   top: 0;
-}
-
-.wall-brick-cover:hover {
-  background: rgba(0, 0, 0, 0);
+  color: white;
 }
 
 

@@ -30,7 +30,7 @@ class Wall extends React.Component {
         itemComponents[wallIndex] = [];
       }
       itemComponents[wallIndex].push (
-          <WallBrick wallIndex={wallIndex} key={index} src={imgSrc} />
+          <WallBrick wallIndex={wallIndex} key={index} data={item.snippet} src={imgSrc} />
       );
     });
     return (
@@ -78,7 +78,7 @@ class MainComponent extends React.Component {
       const request = gapi.client.youtube.activities.list({
         home: true,
         part: 'snippet',
-        maxResults: 5
+        maxResults: 10
       });
 
       request.execute((response) => {

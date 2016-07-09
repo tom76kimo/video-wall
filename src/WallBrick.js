@@ -26,7 +26,7 @@ class WallBrick extends React.Component {
     return (
       <div className="wall-brick">
         <img className={classString} src={this.state.imgSrc} style={{opacity: this.state.imgSrc ? 1 : 0}} />
-        { this.state.mouseEnter ? null : <div className="wall-brick-cover"></div> }
+        { this.state.mouseEnter ? null : <div className="wall-brick-cover">{this.props.data.title}</div> }
       </div>
     );
   }
