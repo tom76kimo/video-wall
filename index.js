@@ -61,7 +61,6 @@ class MainComponent extends React.Component {
     this.endTrackMouse = this.endTrackMouse.bind(this);
   }
   render() {
-    // const lists =
     const style = {
         transitioin: 'all 0.1s',
         marginLeft: `${this.state.offsetX}px`,
@@ -79,11 +78,11 @@ class MainComponent extends React.Component {
       const request = gapi.client.youtube.activities.list({
         home: true,
         part: 'snippet',
-        maxResults: 20
+        maxResults: 5
       });
 
       request.execute((response) => {
-        self.asyncLoadPlayLists(response.items);
+        self.asyncLoadChannels(response.items);
       });
     }
   }
@@ -115,18 +114,38 @@ class MainComponent extends React.Component {
     }
   }
 
-  asyncLoadPlayLists(items) {
+  asyncLoadChannels(items) {
     const self = this;
     const playListLoaders = items.map((item, index) => {
       const channelId = item.snippet.channelId;
-      const request = gapi.client.youtube.playlists.list({
-        part: 'snippet',
-        channelId,
+      const request = gapi.client.youtube.channels.list({
+        part: 'contentDetails',
+        id: channelId,
         maxResults: 20
       });
       return function (callback) {
         request.execute((response) => {
-          console.log('===', channelId, response);
+          callback(null, response);
+        });
+      };
+    });
+    async.parallel(playListLoaders, (err, results) => {
+      if (!err) {
+        self.asyncLoadPlayLists(self.concatUploads(results));
+      }
+    });
+  }
+
+  asyncLoadPlayLists(playlists) {
+    const self = this;
+    const playListLoaders = playlists.map((playlistId, index) => {
+      const request = gapi.client.youtube.playlistItems.list({
+        part: 'snippet',
+        playlistId: playlistId,
+        maxResults: 10
+      });
+      return function (callback) {
+        request.execute((response) => {
           callback(null, response);
         });
       };
@@ -136,9 +155,21 @@ class MainComponent extends React.Component {
         self.setState({
           itemsLoaded: true,
           items: self.concatVideos(results),
-        })
+        });
       }
     });
+  }
+
+  concatUploads(results) {
+    let uploadPlaylists = [];
+    results.forEach((result, index) => {
+      result.items.forEach((item) => {
+        if (item.contentDetails && item.contentDetails.relatedPlaylists && item.contentDetails.relatedPlaylists.uploads) {
+          uploadPlaylists.push(item.contentDetails.relatedPlaylists.uploads);
+        }
+      });
+    });
+    return uploadPlaylists;
   }
 
   concatVideos(results) {
